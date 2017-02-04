@@ -25,6 +25,9 @@ def _changeComicStatus(comicId, toStatus):
         
     return _buildSuccessResp()
 
+def _toCoverUrl(comicId):
+    return "http://oji3qlphh.bkt.clouddn.com/covers/" + str(comicId) + ".jpg"
+
 _comicInfoSpider = None
 def _getComicSpider():
     if _comicInfoSpider == None:
@@ -42,7 +45,7 @@ _chapterDownloader = None
 
 def get_comics_info(pageNo = 1, pageSize = 10, onlyMarked = False):
     '''
-    return: {totalCount, pageNo, pageSize, comics:[{id,name,author,description,status,updatedAt}]}
+    return: {totalCount, pageNo, pageSize, comics:[{id,name,author,description,coverUrl,status,updatedAt}]}
     '''
     offset = (pageNo - 1) * pageSize
     
@@ -56,7 +59,7 @@ def get_comics_info(pageNo = 1, pageSize = 10, onlyMarked = False):
     if onlyMarked:
         querySql += " where status = 'marked'"
     querySql += " limit %s,%s"
-    rowCount, rows = db.execute(querySql, [offset, pageSize])
+    _rowCount, rows = db.execute(querySql, [offset, pageSize])
     
     comics = []
     for row in rows:
@@ -65,6 +68,7 @@ def get_comics_info(pageNo = 1, pageSize = 10, onlyMarked = False):
         comic['name'] = row[1]
         comic['author'] = row[2]
         comic['description'] = row[3]
+        comic['coverUrl'] = _toCoverUrl(row[0])
         comic['status'] = row[4]
         comic['updatedAt'] = time.mktime(row[5].timetuple())
         

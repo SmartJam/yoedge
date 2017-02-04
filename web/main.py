@@ -20,6 +20,10 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/comic/<int:comicId>')
+def show_comic(comicId):
+    return render_template('comic.html')
+
 @app.route('/chapter/<int:chapterId>')
 def show_chapter(chapterId):
     return render_template('chapter.html')

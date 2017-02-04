@@ -40,6 +40,7 @@ class DataSource(object):
             charset = self._db_charset
         )
         conn.autocommit(True)
+        conn.ping(True)
         self._db_conns[thread_name] = conn
         return conn
     
