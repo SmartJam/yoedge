@@ -331,15 +331,15 @@ if __name__ == '__main__':
     # test only!!
     print "running test."
         
-    spider = ComicInfoSpider(True)
-    spider.start()
-    spider.addTasksByRange(1003001, 1003100)  # end:1003016
+#     spider = ComicInfoSpider(True)
+#     spider.start()
+#     spider.addTasksByRange(1003001, 1003100)  # end:1003016
     #spider.addTasks([1001925])
     
-    #downloader = ChapterDownloader()
-    #downloader.addTasks([1000099, 1054967])
-    #downloader.addTasksByComicId(1000873)
-    #downloader.start()
+    downloader = ChapterDownloader()
+    downloader.addTasks([1066714])
+    #downloader.addTasksByComicId(1000931)
+    downloader.start()
     
     time.sleep(1)
     # spider.change2Stop()

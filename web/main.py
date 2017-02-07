@@ -22,16 +22,29 @@ def index():
 
 @app.route('/comic/<int:comicId>')
 def show_comic(comicId):
-    return render_template('comic.html')
+    comicInfo, chapters = apis.get_comic_info(comicId)
+    if comicInfo == None:
+        return render_template('404.html'), 404
+    
+    return render_template('comic.html', comic = comicInfo, chapters = chapters)
 
 @app.route('/chapter/<int:chapterId>')
 def show_chapter(chapterId):
-    return render_template('chapter.html')
+    comicId = int(request.args.get('from', 0))
+    chapter = apis.get_chapter(chapterId, comicId)
+    if chapter == None:
+        return render_template('404.html')
+    
+    return render_template('chapter.html', chapter = chapter)
 
-# @app.route('/static/<path:path>')
-# def send_static(path):
-#     Logger.log("path:" + path)
-#     return send_from_directory("static", path)
+
+import ConfigParser
+conf = ConfigParser.ConfigParser()
+conf.read("../spider.ini")        
+ImgRepoDir = conf.get("baseconf", "imgRepoDir")
+@app.route('/imgs/<path:path>')
+def send_img(path):
+    return send_from_directory(ImgRepoDir, path)
 
 @app.route('/favicon.ico')
 def send_favicon():
@@ -44,8 +57,8 @@ def get_comics_info():
     return: {totalCount, pageNo, pageSize, comics:[{id,name,author,description,status,updatedAt}]}
     '''
     onlyMarked = request.args.get('marked') == "true"
-    pageNo = int(request.args.get('page'))
-    pageSize = int(request.args.get('size'))
+    pageNo = int(request.args.get('page', 1))
+    pageSize = int(request.args.get('size', 10))
 
     result = apis.get_comics_info(pageNo, pageSize, onlyMarked)
     return flask.jsonify(**result)
