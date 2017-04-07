@@ -69,6 +69,40 @@ def mark_comic(comicId):
     print result
     return flask.jsonify(**result)
 
+g = {}
+def ensure_platform(platform):
+    if platform not in g:
+        g[platform] = {'reports':[]}
+    return g[platform]
+
+@app.route('/report/<platform>/delete', methods = ['GET'] )
+def clear_report(platform):
+    p = ensure_platform(platform)
+    p['reports'] = []
+    return "delete.done"
+
+targetKeys = {'act', 'actName', 'sessid', 'type', 'btype', 'uid', 'sid', 'subsid', 'dr', 'sessid2', 'dr2', 'tsed', 'tdr', 'hostid', 'rate', 'hz',  'mid'}
+@app.route('/report/<platform>', methods = ['GET'] )
+def report(platform):
+    act = request.args.get('act', '')
+    if not ((act == 'sjyyappdo') or (act == 'sjyychndo') or (act == 'sjyyvediodo')):
+        return "falied"
+    
+    newReport = {}
+    for key in request.args:
+        if key in targetKeys:
+            newReport[key] = request.args.get(key)
+    
+    p = ensure_platform(platform)
+    print "platform:", p
+    p['reports'].append(newReport)
+    return "ok"
+
+@app.route('/reports/<platform>', methods = ['GET'] )
+def get_reports(platform):
+    p = ensure_platform(platform)
+    return flask.jsonify(p['reports'])
+
 if __name__ == '__main__':
     # test only!!
     print "running test.112111"

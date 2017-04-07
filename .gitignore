@@ -1,3 +1,6 @@
 /db_config.ini
 /spider.ini
 *.pyc
+build
+dist
+*.egg-info
